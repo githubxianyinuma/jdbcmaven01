@@ -1,9 +1,12 @@
 package com.iweb;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
-public class QueryDemo2 {
+public class QueryAll {
     //解决SQL注入漏洞问题
     public static void main(String[] args) {
         //2、建立连接
@@ -12,18 +15,8 @@ public class QueryDemo2 {
         ResultSet resultSet = null;
         try {
             conn = JDBCUtils.getConnection();
-            //scanner能获取键盘上输入的字符串
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("请输入用户名：");
-            String name = scanner.nextLine();//获取键盘输入初值，放到name变量
-            System.out.println("请输入密码：");
-            String passward = scanner.nextLine();
-            //输出输入的结果
-            System.out.println(name+" "+passward);
             //3、预编译SQl
-            pstm = conn.prepareStatement("SELECT COUNT(*) SUM FROM t_user WHERE name = ? AND passward = ?");
-            pstm.setString(1,name);
-            pstm.setString(2,passward);
+            pstm = conn.prepareStatement("select * from t_user");
 
             resultSet = pstm.executeQuery();
 
