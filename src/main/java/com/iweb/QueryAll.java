@@ -1,9 +1,14 @@
 package com.iweb;
 
+import com.iweb.domain.User;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class QueryAll {
@@ -14,24 +19,31 @@ public class QueryAll {
         PreparedStatement pstm = null;
         ResultSet resultSet = null;
         try {
+            //2、建立连接
             conn = JDBCUtils.getConnection();
             //3、预编译SQl
             pstm = conn.prepareStatement("select * from t_user");
 
             resultSet = pstm.executeQuery();
+            //多个用户是一个list集合，存放用户
+            List<User> userList = new ArrayList<>();
 
-            resultSet.next();//让游标指向下一行，目的是查看对比sum的值
-            int sum = resultSet.getInt("sum");
-            //这里的sum值>0，即SQL语句在数据库的查询结果为1，即可以查到
-            if (sum > 0) {
-                System.out.println("登录成功");
+            while(resultSet.next()){
+                Integer id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String password = resultSet.getString("passward");
+                Date date = resultSet.getDate("birthday");
+                int age = resultSet.getInt("age");
+                //每循环一次，就创建一个新用户
+                User user = new User(id,name,password,date,age);
+                userList.add(user);
+                //循环输出
+                //System.out.println(id+" "+name+" "+password+" "+date+" "+age+" ");
             }
-            else {
-                System.out.println("登陆失败");
-            }
+            System.out.println(userList);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }finally {
             JDBCUtils.closeResultSet(resultSet);
             //旧的写法，新的使用JDBC工具类
